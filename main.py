@@ -172,7 +172,7 @@ def main():
         report = asyncio.run(test_router(agent, dataset))
 
         # Save report for this model
-        save_report_to_csv(report, f"test_{model_name.replace(':', '_').replace('/', '_').replace('.', '-')}.csv")
+        save_report_to_csv(report, f"test_{model_name.replace(':', '_').replace('/', '_')}.csv")
 
         all_reports.append(report)
 
