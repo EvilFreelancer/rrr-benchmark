@@ -3,3 +3,4 @@
 dataset_*.json
 test_*.csv
 __pycache__
+.env

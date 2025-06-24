@@ -3,7 +3,9 @@ import re
 
 
 def convert_dialog(text):
-    """Парсит однострочный текст с маркерами 'Робот:' и 'Абонент:'."""
+    """
+    Parses a single-line text with 'Robot:' and 'Subscriber:' markers.
+    """
     pattern = r"(Робот:|Абонент:)"
     parts = re.split(pattern, text)
 
@@ -39,7 +41,7 @@ def process_dataset(input_file, output_file):
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(processed, f, ensure_ascii=False, indent=2)
 
-    print(f"Конвертация завершена! Результат записан в {output_file}")
+    print(f"Conversion completed! Result saved to {output_file}")
 
 
 process_dataset('dataset_input.json', 'dataset_output.json')

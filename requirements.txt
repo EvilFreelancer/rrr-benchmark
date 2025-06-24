@@ -6,6 +6,10 @@ tqdm~=4.67.1
 pydantic~=2.11.4
 pydantic-settings~=2.9.1
 
+# Dataset
+huggingface-hub~=0.33.0
+datasets~=3.6.0
+
 # Inference
 httpx~=0.28.1
 ollama~=0.4.8

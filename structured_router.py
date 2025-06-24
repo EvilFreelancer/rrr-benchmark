@@ -17,20 +17,8 @@ logging.getLogger('httpx').level = logging.ERROR
 logger = logging.getLogger(__name__)
 
 # Environment variables
-OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://gpu02:11434')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.2:1b-instruct-q4_K_M')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.2:1b-instruct-q8_0')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.2:3b-instruct-q4_K_M')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.2:3b-instruct-q8_0')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'qwen3:8b-q4_K_M')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'qwen3:8b-q8_0')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.1:8b-instruct-q4_K_M')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.1:8b-instruct-q8_0')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'deepseek-r1:7b-qwen-distill-q4_K_M')
-OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'deepseek-r1:7b-qwen-distill-q8_0')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'deepseek-r1:8b-llama-distill-q4_K_M')
-# OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'deepseek-r1:8b-llama-distill-q8_0')
-
+OLLAMA_BASE_URL = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
+OLLAMA_MODEL_NAME = os.getenv('OLLAMA_MODEL_NAME', 'llama3.1:8b')
 
 SYSTEM_PROMPT = f"""\
 Ты интеллектуальный ассистент для маршрутизации запросов. Твоя задача — проанализировать историю
@@ -139,7 +127,7 @@ class StructuredOutput:
             self.system_prompt = system_prompt
 
         self.enable_validation = enable_validation
-        self.num_ctx = num_ctx or 1000
+        self.num_ctx = num_ctx or 2048
         self.temperature = temperature or 0.1
 
         self.base_url = base_url
