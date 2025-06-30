@@ -6,7 +6,7 @@ import os
 from tqdm import tqdm
 from datasets import load_dataset
 from structured_router import StructuredRouter
-from .parse_model_name import parse_model_name
+from parse_model_name import parse_model_name
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('pydantic_core').setLevel(logging.WARNING)
@@ -16,20 +16,31 @@ MAX_RETRIES = 3
 
 # List of models for testing
 MODEL_LIST = [
-    'llama3.1:8b-instruct-q4_K_M',
+    # 'llama3.1:8b-instruct-q4_K_M',
     # 'llama3.1:8b-instruct-q8_0',
+    # 'llama3.1:8b-instruct-fp16',
     # 'llama3.2:1b-instruct-q4_K_M',
     # 'llama3.2:1b-instruct-q8_0',
+    # 'llama3.2:1b-instruct-fp16',
     # 'llama3.2:3b-instruct-q4_K_M',
     # 'llama3.2:3b-instruct-q8_0',
+    # 'llama3.2:3b-instruct-fp16',
     # 'qwen3:8b-q4_K_M',
     # 'qwen3:8b-q8_0',
+    # 'qwen3:8b-fp16',
     # 'deepseek-r1:7b-qwen-distill-q4_K_M',
     # 'deepseek-r1:7b-qwen-distill-q8_0',
+    # 'deepseek-r1:7b-qwen-distill-fp16',
     # 'deepseek-r1:8b-llama-distill-q4_K_M',
     # 'deepseek-r1:8b-llama-distill-q8_0',
+    # 'deepseek-r1:8b-llama-distill-fp16',
+
     # 'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
     # 'hf.co/t-tech/T-pro-it-1.0-Q8_0-GGUF',
+
+    # 'deepseek-v2:16b-lite-chat-q4_K_M',
+    # 'deepseek-v2:16b-lite-chat-q8_0',
+    'deepseek-v2:16b-lite-chat-fp16',
 ]
 
 
