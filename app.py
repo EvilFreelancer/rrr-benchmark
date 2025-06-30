@@ -1,3 +1,4 @@
+import re
 import streamlit as st
 import pandas as pd
 
@@ -16,11 +17,35 @@ The table shows the accuracy and performance of the models on the
 [rrr-benchmark](https://huggingface.co/datasets/evilfreelancer/rrr-benchmark) dataset.
 """)
 
+
+def model_size_sort_key(size: str):
+    """
+    Converts model size (e.g. '7b', '1m') to a numeric key for sorting.
+    'm' = mega (1e6), 'b' = billion (1e9)
+    """
+    if not isinstance(size, str):
+        return float('inf')
+    match = re.match(r"(\d+(?:\.\d+)?)([mb])", size.lower())
+    if not match:
+        return float('inf')  # unknown or malformed size
+
+    num, unit = match.groups()
+    multiplier = 1e6 if unit == 'm' else 1e9
+    return float(num) * multiplier
+
+
 # Sidebar filtering
 with st.sidebar:
     st.header("Filters")
+
+    # Name of model
     model_name = st.multiselect("Select model:", options=sorted(df["model_name"].dropna().unique()))
-    model_size = st.multiselect("Select size:", options=sorted(df["model_size"].dropna().unique()))
+
+    # Size of model
+    model_size_options = sorted(df["model_size"].dropna().unique(), key=model_size_sort_key)
+    model_size = st.multiselect("Select size:", options=model_size_options)
+
+    # Level of quantization
     model_quant = st.multiselect("Select quantization:", options=sorted(df["model_quant"].dropna().unique()))
 
 # Apply filters
