@@ -33,18 +33,35 @@ MODEL_LIST = [
 
 
 def load_dataset_from_hf():
-    """
-    Loads the dataset from Hugging Face Hub (evilfreelancer/rrr-benchmark).
-    Returns a list of dicts with keys: messages, routes, rightStepId.
-    """
-    ds = load_dataset("evilfreelancer/rrr-benchmark", split="train")
+    # """
+    # Loads the dataset from Hugging Face Hub (evilfreelancer/rrr-benchmark).
+    # Returns a list of dicts with keys: messages, routes, rightStepId.
+    # """
+    # ds = load_dataset("evilfreelancer/rrr-benchmark", split="train")
+    # return [
+    #     {
+    #         "messages":    item["messages"],
+    #         "routes":      item["routes"],
+    #         "rightStepId": item["rightStepId"]
+    #     }
+    #     for item in ds
+    # ]
+
     return [
         {
-            "messages":    item["messages"],
-            "routes":      item["routes"],
-            "rightStepId": item["rightStepId"]
+            "messages": [
+                {"role": "user", "text": 'принтер не печатает в кабинете 3'},
+                {"role": "assistant", "text": "Укажите пожалуйста номер этажа."},
+                {"role": "user", "text": 'седьмой'},
+            ],
+            "routes": [
+                {"id": 1, "sense": "в диалоге отсутствует отсутствует название принтера"},
+                {"id": 2, "sense": "в диалоге отсутствует номер кабинета."},
+                {"id": 3, "sense": "в диалоге отсутствует номер этажа"},
+                {"id": 4, "sense": "в диалоге присутствует информация о всех трех пунктах: 1. марке либо название принтера 2. номер этажа 3. номер кабинета"}
+            ],
+            "rightStepId": 1
         }
-        for item in ds
     ]
 
 
