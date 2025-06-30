@@ -4,3 +4,6 @@ dataset_*.json
 test_*.csv
 __pycache__
 .env
+route_analysis.csv
+synthetic_dataset_*.json
+synthetic_stats.csv

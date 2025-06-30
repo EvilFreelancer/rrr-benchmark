@@ -12,6 +12,8 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger('pydantic_core').setLevel(logging.WARNING)
 logger = logging.getLogger("RRR")
 
+DATASET_SPLIT = "generic"
+
 MAX_RETRIES = 3
 
 # List of models for testing
@@ -28,9 +30,9 @@ MODEL_LIST = [
     # 'llama3.2:3b-instruct-q8_0',
     # 'llama3.2:3b-instruct-fp16',
 
-    'qwen3:8b-q4_K_M',
-    'qwen3:8b-q8_0',
-    'qwen3:8b-fp16',
+    # 'qwen3:8b-q4_K_M',
+    # 'qwen3:8b-q8_0',
+    # 'qwen3:8b-fp16',
 
     # 'deepseek-r1:7b-qwen-distill-q4_K_M',
     # 'deepseek-r1:7b-qwen-distill-q8_0',
@@ -39,21 +41,26 @@ MODEL_LIST = [
     # 'deepseek-r1:8b-llama-distill-q8_0',
     # 'deepseek-r1:8b-llama-distill-fp16',
 
-    # 'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
-    # 'hf.co/t-tech/T-pro-it-1.0-Q8_0-GGUF',
-
     # 'deepseek-v2:16b-lite-chat-q4_K_M',
     # 'deepseek-v2:16b-lite-chat-q8_0',
     # 'deepseek-v2:16b-lite-chat-fp16',
+
+    # 'hf.co/NikolayKozloff/T-pro-it-1.0-Q2_K-GGUF',
+    # 'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
+    # 'hf.co/t-tech/T-pro-it-1.0-Q8_0-GGUF',
+
+    'hf.co/mradermacher/T-lite-it-1.0-GGUF:Q4_K_M',
+
+    # 'hf.co/ai-sage/GigaChat-20B-A3B-instruct-v1.5-GGUF:Q4_K_M',
 ]
 
 
-def load_dataset_from_hf():
+def load_dataset_from_hf(split: str = DATASET_SPLIT):
     """
     Loads the dataset from Hugging Face Hub (evilfreelancer/rrr-benchmark).
     Returns a list of dicts with keys: messages, routes, answer_id.
     """
-    ds = load_dataset("evilfreelancer/rrr-benchmark", split="train")
+    ds = load_dataset("evilfreelancer/rrr-benchmark", split=split)
     return [
         {
             "messages":  item["messages"],
