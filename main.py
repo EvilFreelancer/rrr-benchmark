@@ -19,15 +19,19 @@ MODEL_LIST = [
     # 'llama3.1:8b-instruct-q4_K_M',
     # 'llama3.1:8b-instruct-q8_0',
     # 'llama3.1:8b-instruct-fp16',
+
     # 'llama3.2:1b-instruct-q4_K_M',
     # 'llama3.2:1b-instruct-q8_0',
     # 'llama3.2:1b-instruct-fp16',
+
     # 'llama3.2:3b-instruct-q4_K_M',
     # 'llama3.2:3b-instruct-q8_0',
     # 'llama3.2:3b-instruct-fp16',
-    # 'qwen3:8b-q4_K_M',
-    # 'qwen3:8b-q8_0',
-    # 'qwen3:8b-fp16',
+
+    'qwen3:8b-q4_K_M',
+    'qwen3:8b-q8_0',
+    'qwen3:8b-fp16',
+
     # 'deepseek-r1:7b-qwen-distill-q4_K_M',
     # 'deepseek-r1:7b-qwen-distill-q8_0',
     # 'deepseek-r1:7b-qwen-distill-fp16',
@@ -40,21 +44,21 @@ MODEL_LIST = [
 
     # 'deepseek-v2:16b-lite-chat-q4_K_M',
     # 'deepseek-v2:16b-lite-chat-q8_0',
-    'deepseek-v2:16b-lite-chat-fp16',
+    # 'deepseek-v2:16b-lite-chat-fp16',
 ]
 
 
 def load_dataset_from_hf():
     """
     Loads the dataset from Hugging Face Hub (evilfreelancer/rrr-benchmark).
-    Returns a list of dicts with keys: messages, routes, rightStepId.
+    Returns a list of dicts with keys: messages, routes, answer_id.
     """
     ds = load_dataset("evilfreelancer/rrr-benchmark", split="train")
     return [
         {
-            "messages":    item["messages"],
-            "routes":      item["routes"],
-            "rightStepId": item["rightStepId"]
+            "messages":  item["messages"],
+            "routes":    item["routes"],
+            "answer_id": item["answer_id"]
         }
         for item in ds
     ]
@@ -96,7 +100,7 @@ async def test_router(agent, dataset):
     for item in tqdm(dataset, desc=f"Testing ({agent.model})"):
         messages = item["messages"]
         routes = item["routes"]
-        expected_id = item["rightStepId"]
+        expected_id = item["answer_id"]
 
         result = None
         attempt = 0

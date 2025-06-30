@@ -127,7 +127,7 @@ class StructuredOutput:
             self.system_prompt = system_prompt
 
         self.enable_validation = enable_validation
-        self.num_ctx = num_ctx or 2048
+        self.num_ctx = num_ctx or 1000
         self.temperature = temperature or 0.1
 
         self.base_url = base_url
@@ -147,7 +147,7 @@ class StructuredOutput:
             # Add the system message if it's not already present
             if 'system' not in messages[0]:
                 # Add the routes to the system prompt
-                routes_text = "\n".join([f"{route['id']} - {route['sense']}" for route in routes])
+                routes_text = "\n".join([f"{route['route_id']} - {route['description']}" for route in routes])
                 full_system_prompt = self.system_prompt + f"\n\nМаршруты:\n" + routes_text
 
                 # Add the system message to the beginning of the conversation history
@@ -203,8 +203,8 @@ class StructuredOutput:
         #     logger.exception("Network or other error", exc_info=e)
         #     return None
         except pydantic.ValidationError as e:
-            print(messages, routes)
-            logger.warning(f"ValidationError (невалидный JSON по схеме): {e}")
+            # print(messages, routes)
+            logger.warning(f"ValidationError (Invalid JSON due to the schema): {e}")
             return None  # не делать retry, сразу выход
 
 

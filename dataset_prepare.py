@@ -29,13 +29,13 @@ def process_dataset(input_file, output_file):
     processed = []
     for item in dataset:
         messages = convert_dialog(item["text"])
-        routes = [{"id": step["id"], "sense": step["sense"]} for step in item["steps"]]
-        right_step_id = item["rightStepId"]
+        routes = [{"route_id": step["id"], "description": step["sense"]} for step in item["steps"]]
+        answer_id = item["rightStepId"]
 
         processed.append({
-            "messages":    messages,
-            "routes":      routes,
-            "rightStepId": right_step_id
+            "messages":  messages,
+            "routes":    routes,
+            "answer_id": answer_id
         })
 
     with open(output_file, 'w', encoding='utf-8') as f:
