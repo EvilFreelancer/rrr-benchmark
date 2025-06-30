@@ -1,6 +1,9 @@
 # Core
 python-dotenv~=1.1.0
+pandas~=2.3.0
+pydantic-core~=2.33.2
 tqdm~=4.67.1
+streamlit~=1.46.1
 
 # Schema
 pydantic~=2.11.4

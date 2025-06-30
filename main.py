@@ -6,6 +6,7 @@ import os
 from tqdm import tqdm
 from datasets import load_dataset
 from structured_router import StructuredRouter
+from .parse_model_name import parse_model_name
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('pydantic_core').setLevel(logging.WARNING)
@@ -128,6 +129,8 @@ async def test_router(agent, dataset):
     avg_time = total_time / valid_responses if valid_responses else 0
     avg_tokens = total_tokens / responses_with_tokens if responses_with_tokens else 0
 
+    model_name, model_size, model_quant = parse_model_name(agent.model)
+
     logger.info("\n=== REPORT FOR MODEL ===")
     logger.info(f"Model: {agent.model}")
     logger.info(f"Total tests: {total_tests}")
@@ -139,6 +142,9 @@ async def test_router(agent, dataset):
 
     report = {
         "model":             agent.model,
+        "model_name":        model_name,
+        "model_size":        model_size,
+        "model_quant":       model_quant,
         "total_tests":       total_tests,
         "valid_responses":   valid_responses,
         "correct_responses": correct,
