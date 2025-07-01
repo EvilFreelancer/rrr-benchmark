@@ -14,8 +14,13 @@ logger = logging.getLogger("RRR")
 
 # Details about dataset
 DATASET_NAME = "evilfreelancer/rrr-benchmark"
-# DATASET_SPLIT = "generic"
-DATASET_SPLIT = "routes_3"
+DATASET_SPLIT_LIST = [
+    "generic",
+    "routes_3",
+    "routes_5",
+    "routes_7",
+    "routes_9",
+]
 
 # List of models for testing
 MODEL_LIST = [
@@ -46,7 +51,7 @@ MODEL_LIST = [
 
     # 'deepseek-v2:16b-lite-chat-q4_K_M',
     # 'deepseek-v2:16b-lite-chat-q8_0',
-    'deepseek-v2:16b-lite-chat-fp16',
+    # 'deepseek-v2:16b-lite-chat-fp16',
 
     # 'hf.co/NikolayKozloff/T-pro-it-1.0-Q2_K-GGUF',
     # 'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
@@ -57,13 +62,15 @@ MODEL_LIST = [
 
     # Doesn't support Structured Output
     # 'hf.co/ai-sage/GigaChat-20B-A3B-instruct-v1.5-GGUF:Q4_K_M',
+
+    'hf.co/NikolayKozloff/ReZero-v0.1-llama-3.2-3b-it-grpo-250404-Q8_0-GGUF'
 ]
 
 # Amount of retries
 MAX_RETRIES = 3
 
 
-def load_dataset_from_hf(path_or_name: str = DATASET_NAME, split: str = DATASET_SPLIT):
+def load_dataset_from_hf(split: str, path_or_name: str = DATASET_NAME):
     """
     Loads the dataset from Hugging Face Hub or path.
     Returns a list of dicts with keys: messages, routes, answer_id.
@@ -98,7 +105,7 @@ def save_report_to_csv(report: dict, filename: str):
     logger.info(f"Report added to {filename}")
 
 
-async def test_router(agent, dataset):
+async def test_router(agent, dataset, split):
     """
     Tests an AI router on a given dataset by querying its predictions
     and comparing them against ground truth labels.
@@ -176,7 +183,7 @@ async def test_router(agent, dataset):
         "model_size":        model_size,
         "model_quant":       model_quant,
         "dataset_name":      DATASET_NAME,
-        "dataset_split":     DATASET_SPLIT,
+        "dataset_split":     split,
         "total_tests":       total_tests,
         "valid_responses":   valid_responses,
         "correct_responses": correct,
@@ -189,40 +196,41 @@ async def test_router(agent, dataset):
 
 
 def main():
-    dataset = load_dataset_from_hf()
-    logger.info(f"Loaded {len(dataset)} test cases from Hugging Face Hub")
-
+    # Pass each split per each model
     all_reports = []
     for model_name in MODEL_LIST:
-        logger.info(f"\n=== TESTING MODEL: {model_name} ===")
-        agent = StructuredRouter(model=model_name)
+        for dataset_split in DATASET_SPLIT_LIST:
+            dataset = load_dataset_from_hf(dataset_split)
+            logger.info(f"Loaded {len(dataset)} test cases from {DATASET_NAME}, split {dataset_split}")
+            logger.info(f"=== TESTING MODEL: {model_name} ===")
+            agent = StructuredRouter(model=model_name)
 
-        # Monkey patch client to collect raw response data
-        orig_chat = agent.client.chat
+            # Monkey patch client to collect raw response data
+            orig_chat = agent.client.chat
 
-        def patched_chat(*args, **kwargs):
-            result = orig_chat(*args, **kwargs)
-            agent.client.last_response_data = result
-            return result
+            def patched_chat(*args, **kwargs):
+                result = orig_chat(*args, **kwargs)
+                agent.client.last_response_data = result
+                return result
 
-        agent.client.chat = patched_chat
+            agent.client.chat = patched_chat
 
-        report = asyncio.run(test_router(agent, dataset))
+            report = asyncio.run(test_router(agent, dataset, dataset_split))
 
-        # Save report for this model
-        save_report_to_csv(report, f"test_{model_name.replace(':', '_').replace('/', '_')}.csv")
+            # Save report for this model
+            save_report_to_csv(report, f"test_{model_name.replace(':', '_').replace('/', '_')}.csv")
 
-        all_reports.append(report)
+            all_reports.append(report)
 
-    logger.info("\n=== OVERALL SUMMARY ===")
-    for r in all_reports:
-        logger.info(
-            f"{r['model']} | "
-            f"accuracy: {r['accuracy']:.4f} | "
-            f"correctness: {r['correct_responses']}/{r['total_tests']} | "
-            f"avg_time: {r['avg_response_time']:.3f}s | "
-            f"avg_tokens: {r['avg_token_count']}"
-        )
+        logger.info("\n=== OVERALL SUMMARY ===")
+        for r in all_reports:
+            logger.info(
+                f"{r['model']} | "
+                f"accuracy: {r['accuracy']:.4f} | "
+                f"correctness: {r['correct_responses']}/{r['total_tests']} | "
+                f"avg_time: {r['avg_response_time']:.3f}s | "
+                f"avg_tokens: {r['avg_token_count']}"
+            )
 
 
 if __name__ == "__main__":
