@@ -12,9 +12,10 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger('pydantic_core').setLevel(logging.WARNING)
 logger = logging.getLogger("RRR")
 
-DATASET_SPLIT = "generic"
-
-MAX_RETRIES = 3
+# Details about dataset
+DATASET_NAME = "evilfreelancer/rrr-benchmark"
+# DATASET_SPLIT = "generic"
+DATASET_SPLIT = "routes_3"
 
 # List of models for testing
 MODEL_LIST = [
@@ -34,33 +35,40 @@ MODEL_LIST = [
     # 'qwen3:8b-q8_0',
     # 'qwen3:8b-fp16',
 
+    # Doesn't support Structured Output
     # 'deepseek-r1:7b-qwen-distill-q4_K_M',
     # 'deepseek-r1:7b-qwen-distill-q8_0',
     # 'deepseek-r1:7b-qwen-distill-fp16',
+
     # 'deepseek-r1:8b-llama-distill-q4_K_M',
     # 'deepseek-r1:8b-llama-distill-q8_0',
     # 'deepseek-r1:8b-llama-distill-fp16',
 
     # 'deepseek-v2:16b-lite-chat-q4_K_M',
     # 'deepseek-v2:16b-lite-chat-q8_0',
-    # 'deepseek-v2:16b-lite-chat-fp16',
+    'deepseek-v2:16b-lite-chat-fp16',
 
     # 'hf.co/NikolayKozloff/T-pro-it-1.0-Q2_K-GGUF',
     # 'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
     # 'hf.co/t-tech/T-pro-it-1.0-Q8_0-GGUF',
 
-    'hf.co/mradermacher/T-lite-it-1.0-GGUF:Q4_K_M',
+    # Doesn't support Structured Output
+    # 'hf.co/mradermacher/T-lite-it-1.0-GGUF:Q4_K_M',
 
+    # Doesn't support Structured Output
     # 'hf.co/ai-sage/GigaChat-20B-A3B-instruct-v1.5-GGUF:Q4_K_M',
 ]
 
+# Amount of retries
+MAX_RETRIES = 3
 
-def load_dataset_from_hf(split: str = DATASET_SPLIT):
+
+def load_dataset_from_hf(path_or_name: str = DATASET_NAME, split: str = DATASET_SPLIT):
     """
-    Loads the dataset from Hugging Face Hub (evilfreelancer/rrr-benchmark).
+    Loads the dataset from Hugging Face Hub or path.
     Returns a list of dicts with keys: messages, routes, answer_id.
     """
-    ds = load_dataset("evilfreelancer/rrr-benchmark", split=split)
+    ds = load_dataset(path_or_name, split=split)
     return [
         {
             "messages":  item["messages"],
@@ -167,6 +175,8 @@ async def test_router(agent, dataset):
         "model_name":        model_name,
         "model_size":        model_size,
         "model_quant":       model_quant,
+        "dataset_name":      DATASET_NAME,
+        "dataset_split":     DATASET_SPLIT,
         "total_tests":       total_tests,
         "valid_responses":   valid_responses,
         "correct_responses": correct,

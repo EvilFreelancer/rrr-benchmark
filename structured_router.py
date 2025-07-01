@@ -102,6 +102,7 @@ class StructuredOutput:
         base_url=OLLAMA_BASE_URL,
         model=OLLAMA_MODEL_NAME,
         num_ctx=1000,
+        num_predict=1000,
         enable_validation=True,
         temperature=0.1,
         **kwargs
@@ -128,6 +129,7 @@ class StructuredOutput:
 
         self.enable_validation = enable_validation
         self.num_ctx = num_ctx or 1000
+        self.num_predict = num_predict or 1000
         self.temperature = temperature or 0.1
 
         self.base_url = base_url
@@ -149,6 +151,8 @@ class StructuredOutput:
                 # Add the routes to the system prompt
                 routes_text = "\n".join([f"{route['route_id']} - {route['description']}" for route in routes])
                 full_system_prompt = self.system_prompt + f"\n\nМаршруты:\n" + routes_text
+                # print(full_system_prompt)
+                # exit()
 
                 # Add the system message to the beginning of the conversation history
                 messages = [{"role": "system", "content": full_system_prompt}] + messages
@@ -161,6 +165,7 @@ class StructuredOutput:
                 options={
                     "temperature": self.temperature,
                     "num_ctx":     self.num_ctx,
+                    "num_predict": self.num_predict,
                     "timeout":     60,
                 },
             )

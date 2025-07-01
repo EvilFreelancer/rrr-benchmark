@@ -56,22 +56,6 @@ with st.sidebar:
     # Quantization level filter (default alphabetical sort)
     model_quant = st.multiselect("Select quantization:", options=sorted(df["model_quant"].dropna().unique()))
 
-# Apply filters to the dataset
-filtered_df = df.copy()
-if model_name:
-    filtered_df = filtered_df[filtered_df["model_name"].isin(model_name)]
-if model_size:
-    filtered_df = filtered_df[filtered_df["model_size"].isin(model_size)]
-if model_quant:
-    filtered_df = filtered_df[filtered_df["model_quant"].isin(model_quant)]
-
-# Format specification for numerical columns
-format_dict = {
-    "accuracy":          "{:.2%}".format,
-    "avg_response_time": "{:.3f}".format,
-    "avg_token_count":   "{:.1f}".format
-}
-
 
 # Function to render model_name as a clickable link with a tooltip (title)
 def make_clickable_label(row):
@@ -84,24 +68,100 @@ def make_clickable_label(row):
     return f'<a href="{url}" title="{model_field}" target="_blank">{name}</a>'
 
 
-# Create new column with HTML links for model_name
-display_df = filtered_df.copy()
-display_df["model_name"] = display_df.apply(make_clickable_label, axis=1)
+def render_split_table(split_data, split_name):
+    """Render table for a specific dataset split."""
+    if split_data.empty:
+        st.info(
+            f"No data available for {split_name} split yet. Results will appear here after running benchmarks on this "
+            f"split.")
+        return
 
-# Drop 'model' column from display (but keep it for link rendering)
-display_df = display_df.drop(columns=["model"], errors="ignore")
+    # Apply filters to the split data
+    filtered_df = split_data.copy()
+    if model_name:
+        filtered_df = filtered_df[filtered_df["model_name"].isin(model_name)]
+    if model_size:
+        filtered_df = filtered_df[filtered_df["model_size"].isin(model_size)]
+    if model_quant:
+        filtered_df = filtered_df[filtered_df["model_quant"].isin(model_quant)]
 
-# Apply sorting, formatting, and styling
-styled = (
-    display_df.sort_values(by="accuracy", ascending=False)
-    .reset_index(drop=True)
-    .style
-    .format(format_dict)
-    .set_sticky(axis="index")  # Keep first column visible on scroll
-    .hide(axis="index")  # Hide row index
-    .set_properties(subset=["model_name"], **{"text-align": "left"})  # Align left
-)
-st.markdown(
-    f'<div class="scrollable-table">{styled.to_html(escape=False)}</div>',
-    unsafe_allow_html=True
-)
+    if filtered_df.empty:
+        st.warning("No data matches the selected filters.")
+        return
+
+    # Format specification for numerical columns
+    format_dict = {
+        "accuracy":          "{:.2%}".format,
+        "avg_response_time": "{:.3f}".format,
+        "avg_token_count":   "{:.1f}".format
+    }
+
+    # Create new column with HTML links for model_name
+    display_df = filtered_df.copy()
+    display_df["model_name"] = display_df.apply(make_clickable_label, axis=1)
+
+    # Drop 'model' column from display (but keep it for link rendering)
+    display_df = (
+        display_df
+        .drop(columns=["model"], errors="ignore")
+        .drop(columns=["dataset_name"], errors="ignore")
+        .drop(columns=["dataset_split"], errors="ignore")
+        .drop(columns=["total_tests"], errors="ignore")
+        .drop(columns=["valid_responses"], errors="ignore")
+        .drop(columns=["correct_responses"], errors="ignore")
+    )
+
+    # Apply sorting, formatting, and styling
+    styled = (
+        display_df.sort_values(by="accuracy", ascending=False)
+        .reset_index(drop=True)
+        .style
+        .format(format_dict)
+        .set_sticky(axis="index")  # Keep first column visible on scroll
+        .hide(axis="index")  # Hide row index
+        .set_properties(subset=["model_name"], **{"text-align": "left"})  # Align left
+    )
+
+    st.markdown(
+        f'<div class="scrollable-table">{styled.to_html(escape=False)}</div>',
+        unsafe_allow_html=True
+    )
+
+
+# Define dataset splits and their descriptions
+splits_config = {
+    "generic":  {
+        "name":        "Generic",
+        "description": "Original dataset with variable number of routes per item (2-9 routes)"
+    },
+    "routes_3": {
+        "name":        "3 Routes",
+        "description": "Synthetic dataset with exactly 3 route options per item (simple complexity)"
+    },
+    "routes_5": {
+        "name":        "5 Routes",
+        "description": "Synthetic dataset with exactly 5 route options per item (medium complexity)"
+    },
+    "routes_7": {
+        "name":        "7 Routes",
+        "description": "Synthetic dataset with exactly 7 route options per item (high complexity)"
+    },
+    "routes_9": {
+        "name":        "9 Routes",
+        "description": "Synthetic dataset with exactly 9 route options per item (maximum complexity)"
+    }
+}
+
+# Create tabs for different dataset splits
+tab_names = [splits_config[split]["name"] for split in splits_config.keys()]
+tabs = st.tabs(tab_names)
+
+# Render each tab
+for i, (split_key, split_config) in enumerate(splits_config.items()):
+    with tabs[i]:
+        st.markdown(f"**{split_config['description']}**")
+
+        # Filter data for this specific split
+        split_data = df[df["dataset_split"] == split_key] if "dataset_split" in df.columns else pd.DataFrame()
+
+        render_split_table(split_data, split_config["name"])
