@@ -15,7 +15,7 @@ logger = logging.getLogger("RRR")
 # Details about dataset
 DATASET_NAME = "evilfreelancer/rrr-benchmark"
 DATASET_SPLIT_LIST = [
-    "generic",
+    # "generic",
     "routes_3",
     "routes_5",
     "routes_7",
@@ -24,38 +24,38 @@ DATASET_SPLIT_LIST = [
 
 # List of models for testing
 MODEL_LIST = [
-    # 'llama3.1:8b-instruct-q4_K_M',
-    # 'llama3.1:8b-instruct-q8_0',
-    # 'llama3.1:8b-instruct-fp16',
+    'llama3.1:8b-instruct-q4_K_M',
+    'llama3.1:8b-instruct-q8_0',
+    'llama3.1:8b-instruct-fp16',
 
-    # 'llama3.2:1b-instruct-q4_K_M',
-    # 'llama3.2:1b-instruct-q8_0',
-    # 'llama3.2:1b-instruct-fp16',
+    'llama3.2:1b-instruct-q4_K_M',
+    'llama3.2:1b-instruct-q8_0',
+    'llama3.2:1b-instruct-fp16',
 
-    # 'llama3.2:3b-instruct-q4_K_M',
-    # 'llama3.2:3b-instruct-q8_0',
-    # 'llama3.2:3b-instruct-fp16',
+    'llama3.2:3b-instruct-q4_K_M',
+    'llama3.2:3b-instruct-q8_0',
+    'llama3.2:3b-instruct-fp16',
 
-    # 'qwen3:8b-q4_K_M',
-    # 'qwen3:8b-q8_0',
-    # 'qwen3:8b-fp16',
+    'qwen3:8b-q4_K_M',
+    'qwen3:8b-q8_0',
+    'qwen3:8b-fp16',
 
     # Doesn't support Structured Output
     # 'deepseek-r1:7b-qwen-distill-q4_K_M',
     # 'deepseek-r1:7b-qwen-distill-q8_0',
     # 'deepseek-r1:7b-qwen-distill-fp16',
 
-    # 'deepseek-r1:8b-llama-distill-q4_K_M',
-    # 'deepseek-r1:8b-llama-distill-q8_0',
-    # 'deepseek-r1:8b-llama-distill-fp16',
+    'deepseek-r1:8b-llama-distill-q4_K_M',
+    'deepseek-r1:8b-llama-distill-q8_0',
+    'deepseek-r1:8b-llama-distill-fp16',
 
-    # 'deepseek-v2:16b-lite-chat-q4_K_M',
-    # 'deepseek-v2:16b-lite-chat-q8_0',
-    # 'deepseek-v2:16b-lite-chat-fp16',
+    'deepseek-v2:16b-lite-chat-q4_K_M',
+    'deepseek-v2:16b-lite-chat-q8_0',
+    'deepseek-v2:16b-lite-chat-fp16',
 
-    # 'hf.co/NikolayKozloff/T-pro-it-1.0-Q2_K-GGUF',
-    # 'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
-    # 'hf.co/t-tech/T-pro-it-1.0-Q8_0-GGUF',
+    'hf.co/NikolayKozloff/T-pro-it-1.0-Q2_K-GGUF',
+    'hf.co/t-tech/T-pro-it-1.0-Q4_K_M-GGUF',
+    'hf.co/t-tech/T-pro-it-1.0-Q8_0-GGUF',
 
     # Doesn't support Structured Output
     # 'hf.co/mradermacher/T-lite-it-1.0-GGUF:Q4_K_M',
@@ -64,6 +64,9 @@ MODEL_LIST = [
     # 'hf.co/ai-sage/GigaChat-20B-A3B-instruct-v1.5-GGUF:Q4_K_M',
 
     'hf.co/NikolayKozloff/ReZero-v0.1-llama-3.2-3b-it-grpo-250404-Q8_0-GGUF'
+
+    'gemma3n:e4b-it-q4_K_M',
+    'gemma3n:e2b-it-q4_K_M',
 ]
 
 # Amount of retries
@@ -202,7 +205,7 @@ def main():
         for dataset_split in DATASET_SPLIT_LIST:
             dataset = load_dataset_from_hf(dataset_split)
             logger.info(f"Loaded {len(dataset)} test cases from {DATASET_NAME}, split {dataset_split}")
-            logger.info(f"=== TESTING MODEL: {model_name} ===")
+            logger.info(f"\n\n=== TESTING MODEL: {model_name} ===")
             agent = StructuredRouter(model=model_name)
 
             # Monkey patch client to collect raw response data

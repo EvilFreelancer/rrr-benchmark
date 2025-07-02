@@ -242,7 +242,7 @@ def main():
     route_counts = [3, 5, 7, 9]
 
     # Generate synthetic datasets
-    num_items_per_dataset = 100
+    num_items_per_dataset = 1000
     datasets = generator.generate_synthetic_dataset(num_items_per_dataset, route_counts)
 
     # Validate datasets
