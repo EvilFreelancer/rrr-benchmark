@@ -68,21 +68,25 @@ def main():
             "file":        "dataset_output.json",
             "description": "Original processed dataset from dataset_input.json with variable routes per item"
         },
+        "routes_2": {
+            "file":        "synthetic_dataset_2_routes.json",
+            "description": "Synthetic dataset with exactly 2 route options per item"
+        },
         "routes_3": {
             "file":        "synthetic_dataset_3_routes.json",
-            "description": "Synthetic dataset with exactly 3 route options per item (simple complexity)"
+            "description": "Synthetic dataset with exactly 3 route options per item"
         },
         "routes_5": {
             "file":        "synthetic_dataset_5_routes.json",
-            "description": "Synthetic dataset with exactly 5 route options per item (medium complexity)"
+            "description": "Synthetic dataset with exactly 5 route options per item"
         },
         "routes_7": {
             "file":        "synthetic_dataset_7_routes.json",
-            "description": "Synthetic dataset with exactly 7 route options per item (high complexity)"
+            "description": "Synthetic dataset with exactly 7 route options per item"
         },
         "routes_9": {
             "file":        "synthetic_dataset_9_routes.json",
-            "description": "Synthetic dataset with exactly 9 route options per item (maximum complexity)"
+            "description": "Synthetic dataset with exactly 9 route options per item"
         }
     }
 

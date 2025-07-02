@@ -239,7 +239,7 @@ def main():
     generator = SyntheticDatasetGenerator('dataset_input.json')
 
     # Define route counts to generate
-    route_counts = [3, 5, 7, 9]
+    route_counts = [2, 3, 5, 7, 9]
 
     # Generate synthetic datasets
     num_items_per_dataset = 1000
